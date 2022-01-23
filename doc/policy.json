@@ -1,0 +1,13 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iot:Connect",
+        "iot:Publish"
+      ],
+      "Resource": "arn:aws:iot:<your-region>:<your-ID>:topic/sensors"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "aws-iot-provision",
+  "private": false,
+  "version": "0.0.1",
+  "description": "AWS Lambda function to [rovision a balena device to IoT Core",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-iot": "^3.47.0",
+    "balena-sdk": "^16.11.2"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/balena-io-examples/aws-iot-provision.git"
+  },
+  "keywords": [
+    "balena",
+    "balenaCloud",
+    "aws",
+    "iotcore",
+    "iot"
+  ],
+  "author": "Ken Bannister <ken@balena.io>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/balena-io-examples/aws-iot-provision/issues"
+  },
+  "homepage": "https://github.com/balena-io-examples/aws-iot-provision#readme"
+}
