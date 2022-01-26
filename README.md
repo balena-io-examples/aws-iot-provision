@@ -14,11 +14,15 @@ You must define an AWS IoT policy that describes the permissible messaging opera
 You also must define an AWS IAM Role with permissions to run the Lambda function as described by the AWS_ROLE_ARN entry in the table below. See an [example screenshot](doc/iam-provision-role.png).
 
 ### Development setup
-Clone the [balena-io-examples/aws-iot-provision](https://github.com/balena-io-examples/aws-iot-provision) repository.
+First clone the [balena-io-examples/aws-iot-provision](https://github.com/balena-io-examples/aws-iot-provision) repository. Then install the [node-lambda](https://www.npmjs.com/package/node-lambda) tool for local testing and deployment to AWS Lambda. It's simplest to install it globally:
 
-The sections below show how to use the [node-lambda](https://github.com/motdotla/node-lambda) tool to test the provisioning function locally and deploy to AWS Lambda. You will provide the environment variables described in the table below in files used for test/deployment. We include example files to help you get started.
+```
+   npm install -g node-lambda
+```
 
-| Name        |    Value    |
+You will provide the environment variables below in files used by node-lambda. We include example files to help you get started.
+
+| Variable    |    Value    |
 |-------------|-------------|
 | AWS_ACCESS_KEY_ID | For IAM User with permissions policies to deploy the Lambda function |
 | AWS_SECRET_ACCESS_KEY | For access key |
