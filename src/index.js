@@ -5,8 +5,9 @@
 const sdk = require('balena-sdk');
 const balena = sdk.fromSharedOptions()
 const { IoTClient, AttachPolicyCommand, AttachThingPrincipalCommand, CreateKeysAndCertificateCommand,
-        CreateThingCommand, DeleteCertificateCommand, DeleteThingCommand, DetachPolicyCommand,
-        DetachThingPrincipalCommand, ListThingPrincipalsCommand, UpdateCertificateCommand } = require('@aws-sdk/client-iot')
+        CreateThingCommand, DeleteCertificateCommand, DeleteThingCommand, DescribeThingCommand,
+        DetachPolicyCommand, DetachThingPrincipalCommand, ListThingPrincipalsCommand,
+        ResourceNotFoundException, UpdateCertificateCommand } = require('@aws-sdk/client-iot')
 
 // AWS IoT Client
 let iot = null
@@ -66,9 +67,28 @@ exports.handler = async function(event, context) {
  * Adds device to AWS IoT registry with new key pair and certificate, attaches security
  * policy, and finally sets balena device environment vars.
  *
- * Throws an error on failure to create the device.
+ * Returns a 400 response if thing already exists. Throws an error on failure to
+ * create the device.
  */
 async function handlePost(uuid) {
+    // First explicitly verify thing has not yet been created. Otherwise CreateThingCommand
+    // accepts a UUID even if thing for it already has been created.
+    try {
+        let params = {
+          thingName: uuid
+        }
+        await iot.send(new DescribeThingCommand(params));
+        return {
+            statusCode: 400,
+            body: "thing already exists"
+        }
+    } catch(error) {
+        // Expecting thing not found; otherwise we don't know how to handle
+        if (!error.name || error.name != 'ResourceNotFoundException') {
+            throw error
+        }
+    }
+
     let params = {
       thingName: uuid
     }

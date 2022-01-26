@@ -3,11 +3,13 @@
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": [
-        "iot:Connect",
-        "iot:Publish"
-      ],
-      "Resource": "arn:aws:iot:<your-region>:<your-ID>:topic/sensors"
-    }
+      "Action": "iot:Connect",
+      "Resource": "arn:aws:iot:<your-region>:<your-ID>:client/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "iot:Publish",
+      "Resource": "arn:aws:iot:<your-region>:<your-ID>:topic/<your-topic>"
+    },
   ]
 }
