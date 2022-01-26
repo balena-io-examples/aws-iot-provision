@@ -1,6 +1,6 @@
 # AWS Lambda for IoT Device Provisioning
 
-This Lambda function allows you to provision and synchronize a balena device with AWS IoT Core in a secure and automated way. The Lambda may be called by a balena device, as seen in the [cloud-relay](https://github.com/balena-io-examples/cloud-relay) example.
+This Lambda function allows you to provision and synchronize a balena device with AWS IoT Core in a secure and automated way via an HTTP endpoint. The Lambda may be called by a balena device, as seen in the [cloud-relay](https://github.com/balena-io-examples/cloud-relay) example.
 
 | Command | Actions |
 |-------------|--------|
