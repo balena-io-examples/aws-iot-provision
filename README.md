@@ -9,14 +9,14 @@ This Lambda function allows you to provision and synchronize a balena device wit
 
 ## Setup and Testing
 ### AWS IoT Core setup
-You must define an AWS policy that describes the permissible messaging between IoT Core and the balena device. See the IoT Core policy [documentation](https://docs.aws.amazon.com/iot/latest/developerguide/iot-policies.html), and `doc/policy.json` for an example.
+You must define an AWS IoT policy that describes the permissible messaging operations between IoT Core and a balena device. Provisioning attaches this policy to the public key certificate created for a device, via the AWS_IOT_POLICY environment variable in the table below. See the required statements in `doc/policy.json` and a [screenshot](doc/iot-messaging-policy.png), and the IoT Core policy [documentation](https://docs.aws.amazon.com/iot/latest/developerguide/iot-policies.html) for background.
 
-You also must define an AWS Role with permissions to run the Lambda function as described in the table below.
+You also must define an AWS IAM Role with permissions to run the Lambda function as described by the AWS_ROLE_ARN entry in the table below. See an [example screenshot](doc/iam-provision-role.png).
 
 ### Development setup
 Clone the [balena-io-examples/aws-iot-provision](https://github.com/balena-io-examples/aws-iot-provision) repository.
 
-The sections below show how to use the [node-lambda](https://github.com/motdotla/node-lambda) project to test the provisioning function locally and deploy to AWS Lambda. You must provide the environment variables described in the table below for use in files for test/deployment.
+The sections below show how to use the [node-lambda](https://github.com/motdotla/node-lambda) tool to test the provisioning function locally and deploy to AWS Lambda. You will provide the environment variables described in the table below in files used for test/deployment. We include example files to help you get started.
 
 | Name        |    Value    |
 |-------------|-------------|
@@ -25,23 +25,23 @@ The sections below show how to use the [node-lambda](https://github.com/motdotla
 | AWS_ROLE_ARN | For IAM Role to execute the Lambda. This role must include the `AWSIoTLogging` and `AWSIoTConfigAccess` permissions policies. |
 | AWS_REGION | AWS region for registry, like `us-east-1` |
 | RESIN_EMAIL | For balena login |
-| RESIN_PASSWORD | For the email address |
+| RESIN_PASSWORD | For RESIN_EMAIL |
 | AWS_IOT_POLICY | Name of AWS policy with permissions for messaging with IoT Core |
 
 
 ### Test locally
-To test the Lambda function without deploying it, see `tools/test-local.sh`. The comments for that file include instructions on how to use it. You must provide environment variables from the table above in a file like `tools/run.env`.
+To test the Lambda function without deploying it, see `tools/test-local.sh`. The comments for that file include instructions on how to use it. You must provide environment variables from the table above in a file with contents like `tools/run.env`.
 
-After a successful POST, you should see the device appear in your IoT Core registry and `AWS_CERT` and `AWS_PRIVATE_KEY` variables appear in balenaCloud for the device. After a successful DELETE, those variables disappear.
+After a successful POST, you should see the device appear in your IoT Core registry, and `AWS_CERT` and `AWS_PRIVATE_KEY` variables appear in balenaCloud for the device. After a successful DELETE, those variables disappear.
 
 ## Deploy
-To deploy to AWS Lambda, see `tools/deploy-func.sh`.The comments for that file include instructions on how to use it. You must provide environment variables from the table above in a file like `tools/.env` to deploy the function to AWS Lambda. You also must provide the environment variables as specified in `tools/deploy.env` file, which are used when running the Lambda function.
+To deploy to AWS Lambda, see `tools/deploy-func.sh`.The comments for that file include instructions on how to use it. You must provide environment variables from the table above in a file with contents like `tools/.env` to deploy the function to AWS Lambda. You also must provide the balena specific environment variables in a separate `tools/deploy.env` file, which are used when running the Lambda function.
 
-After deployment, login to the AWS console and visit the Lambda console. You should see the Lambda function you deployed. Next add an API Gateway trigger from the link on that page. Make sure the Method for the route is POST and Security is open (though you could add this later). The result is a Lambda like below.
+After deployment, login to the AWS console and visit the Lambda console to you Lambda function. Next add an API Gateway trigger from the link on that page. Make sure the Method for the route is POST and Security is open (though you could add this later). The result should be a Lambda and API Gateway like below.
 
 ![Alt text](doc/lambda-trigger.png)
 
 ### Test the Lambda
-To test the Lambda, see `tools/test-remote.sh`. You must update the script to provide a balena device UUID and the URL for the API endpoint you created in the Lambda console. Execution of the script requires a parameter with POST or DELETE.
+To test the Lambda, see `tools/test-remote.sh`. You must update the script to provide a balena device UUID and the URL for the API endpoint you created in the Lambda console. Execution of the script requires a POST/DELETE parameter.
 
 After a successful POST, you should see the device appear in your IoT Core registry and `AWS_CERT` and `AWS_PRIVATE_KEY` variables appear in balenaCloud for the device. After a successful DELETE, those variables disappear.
