@@ -9,7 +9,7 @@ This Lambda function allows you to provision and synchronize a balena device wit
 
 ## Setup and Testing
 ### AWS IoT Core setup
-You must define an AWS IoT policy that describes the permissible messaging operations between IoT Core and a balena device. Provisioning attaches this policy to the public key certificate created for a device. See the statements in the example `doc/policy.json` and a [screenshot](doc/iot-messaging-policy.png), and the IoT Core policy [documentation](https://docs.aws.amazon.com/iot/latest/developerguide/iot-policies.html) for background.
+You must define an AWS IoT policy that describes the permissible messaging operations between IoT Core and a balena device, and provide its name as the AWS_IOT_POLICY variable in the table below. Provisioning attaches this policy to the public key certificate created for a device. See the statements in the example `doc/policy.json` and a [screenshot](doc/iot-messaging-policy.png), and the IoT Core policy [documentation](https://docs.aws.amazon.com/iot/latest/developerguide/iot-policies.html) for background.
 
 You also must define an AWS IAM Role with permissions to run the Lambda function as described by the AWS_ROLE_ARN entry in the table below. See an [example screenshot](doc/iam-provision-role.png).
 
