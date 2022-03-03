@@ -28,11 +28,11 @@ You will provide the environment variables below in files used by node-lambda. W
 |-------------|-------------|
 | AWS_ACCESS_KEY_ID | For IAM User with permissions policies to deploy the Lambda function |
 | AWS_SECRET_ACCESS_KEY | For access key |
-| AWS_ROLE_ARN | For IAM Role to execute the Lambda. This role must include the `AWSIoTLogging` and `AWSIoTConfigAccess` permissions policies. |
 | AWS_REGION | AWS region for registry, like `us-east-1` |
-| RESIN_EMAIL | For balena login |
-| RESIN_PASSWORD | For RESIN_EMAIL |
 | AWS_IOT_POLICY | Name of AWS policy with permissions for messaging with IoT Core |
+| AWS_ROLE_ARN | For IAM Role to execute the Lambda. This role must include the `AWSIoTLogging` and `AWSIoTConfigAccess` permissions policies. |
+| BALENA_EMAIL | For balena account |
+| BALENA_PASSWORD | For balena account |
 
 
 ### Test locally
