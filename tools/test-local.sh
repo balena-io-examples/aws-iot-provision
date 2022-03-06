@@ -15,8 +15,10 @@
 #    * Then run this file, including the method parameter as shown above.
 
 BALENA_DEVICE_UUID=<your-uuid>
+BALENA_SERVICE_NAME=<your=service-name-or-blank>
 
 echo '{
+    "balena_service": "'$BALENA_SERVICE_NAME'",
     "method": "'$1'",
     "uuid": "'$BALENA_DEVICE_UUID'"
 }' >event.json

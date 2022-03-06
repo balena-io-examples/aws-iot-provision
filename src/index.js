@@ -14,10 +14,12 @@ let iot = null
 
 /**
  * Provides creation and deletion of AWS IoT Core device, and updates balena environment
- * vars. Expects JSON formatted event like: { uuid: <device-uuid>, method: <POST|DELETE> }.
+ * vars. Expects JSON formatted event like: { uuid: <device-uuid>, method: <POST|DELETE>,
+ * balena_service: <service-name> }.
  */
 exports.handler = async function(event, context) {
     try {
+        const badBodyCode = 'provision.request.bad-body'
         const creds = { email: process.env.BALENA_EMAIL, password: process.env.BALENA_PASSWORD }
         await balena.auth.login(creds)
 
@@ -28,22 +30,39 @@ exports.handler = async function(event, context) {
         }
         const body = JSON.parse(event.body);
         if (!body.uuid) {
-            throw { code: 'provision.request.no-uuid' }
+            throw { code: badBodyCode }
         }
-        await balena.models.device.get(body.uuid)
+        // lookup device; throws error if not found
+        const device = await balena.models.device.get(body.uuid)
+
+        // lookup service, if name provided
+        let service
+        if (body.balena_service) {
+            const allServices = await balena.models.service.getAllByApplication(device.belongs_to__application.__id)
+            for (service of allServices) {
+                //console.debug("service_name:", service.service_name)
+                if (service.service_name == body.balena_service) {
+                    break
+                }
+            }
+            if (!service) {
+                throw { code: badBodyCode }
+            }
+        }
 
         // Initialize globals for AWS IoT client
         iot = new IoTClient({ region: process.env.AWS_REGION });
 
+        let deviceText = `${body.uuid} for service ${body.balena_service}`
         switch (body.method) {
             case 'POST':
-                console.log(`Creating device: ${body.uuid} ...`)
-                return await handlePost(body.uuid)
+                console.log(`Creating device: ${deviceText} ...`)
+                return await handlePost(device, service)
             case 'DELETE':
-                console.log(`Deleting device: ${body.uuid} ...`)
-                return await handleDelete(body.uuid)
+                console.log(`Deleting device: ${deviceText} ...`)
+                return await handleDelete(device, service)
             default:
-                throw { code: 'provision.request.bad-method' }
+                throw { code: 'provision.request.bad-body' }
         }
     } catch (error) {
         console.warn("Error:", error)
@@ -65,17 +84,20 @@ exports.handler = async function(event, context) {
 
 /**
  * Adds device to AWS IoT registry with new key pair and certificate, attaches security
- * policy, and finally sets balena device environment vars.
+ * policy, and finally sets balena environment vars.
+ *
+ * service: Service on the balena device for which variables are created. If service
+ * is undefined, creates device level environment variables.
  *
  * Returns a 400 response if thing already exists. Throws an error on failure to
  * create the device.
  */
-async function handlePost(uuid) {
+async function handlePost(device, service) {
     // First explicitly verify thing has not yet been created. Otherwise CreateThingCommand
     // accepts a UUID even if thing for it already has been created.
     try {
         let params = {
-          thingName: uuid
+          thingName: device.uuid
         }
         await iot.send(new DescribeThingCommand(params));
         return {
@@ -90,7 +112,7 @@ async function handlePost(uuid) {
     }
 
     let params = {
-      thingName: uuid
+      thingName: device.uuid
     }
     let thing = await iot.send(new CreateThingCommand(params));
 
@@ -111,13 +133,19 @@ async function handlePost(uuid) {
     }
     await iot.send(new AttachThingPrincipalCommand(params));
 
+    if (service) {
+        await balena.models.device.serviceVar.set(device.id, service.id, 'AWS_CERT',
+                Buffer.from(thingCert.certificatePem).toString('base64'))
+        await balena.models.device.serviceVar.set(device.id, service.id, 'AWS_PRIVATE_KEY',
+                Buffer.from(thingCert.keyPair.PrivateKey).toString('base64'))
+    } else {
+        await balena.models.device.envVar.set(device.uuid, 'AWS_CERT',
+                Buffer.from(thingCert.certificatePem).toString('base64'))
+        await balena.models.device.envVar.set(device.uuid, 'AWS_PRIVATE_KEY',
+                Buffer.from(thingCert.keyPair.PrivateKey).toString('base64'))
+    }
 
-    await balena.models.device.envVar.set(uuid, 'AWS_CERT',
-            Buffer.from(thingCert.certificatePem).toString('base64'))
-    await balena.models.device.envVar.set(uuid, 'AWS_PRIVATE_KEY',
-            Buffer.from(thingCert.keyPair.PrivateKey).toString('base64'))
-
-    console.log(`Created device ${uuid}`)
+    console.log(`Created device ${device.uuid}`)
     return {
         statusCode: 201,
         body: "device created"
@@ -126,33 +154,43 @@ async function handlePost(uuid) {
 
 /**
  * Removes device and certificate from AWS IoT registry, and also removes balena
- * device environment vars.
+ * environment vars. Cleans up resources as available; accommodates missing resources.
+ *
+ * service: Service on the balena device for which variables are removed. If service
+ * is undefined, removes device level environment variables.
  * 
  * Throws an error on failure to delete the device or certificate.
  */
-async function handleDelete(uuid) {
+async function handleDelete(device, service) {
     // find certificate for thing
-    let params = {
-      thingName: uuid
-    }
-    const metadata = await iot.send(new ListThingPrincipalsCommand(params))
-    // Need both cert ARN and ID later; collect both of them here. Not concerned
-    // about ARN mis-formatted so ID not found.
-    let certArn = null
-    let certId = null
-    for(let p of metadata.principals) {
-        if (p.includes('cert') && p.includes('/')) {
-            certArn = p
-            certId = p.substring( p.lastIndexOf('/')+1, p.length )
-            console.log("Found certificate:", certArn)
-            break
+    let certId, certArn
+    try {
+        let params = {
+          thingName: device.uuid
+        }
+        const metadata = await iot.send(new ListThingPrincipalsCommand(params))
+        // Need both cert ARN and ID later; collect both of them here. Not concerned
+        // about ARN mis-formatted so ID not found.
+        for(let p of metadata.principals) {
+            if (p.includes('cert') && p.includes('/')) {
+                certArn = p
+                certId = p.substring( p.lastIndexOf('/')+1, p.length )
+                console.log("Found certificate:", certArn)
+                break
+            }
+        }
+    } catch (error) {
+        if (!error.name || error.name != "ResourceNotFoundException") {
+            throw error
+        } else {
+            // certId still null; handled below
         }
     }
 
     if (certId) {
         // detach certificate from policy and thing, then delete it
-        params = {
-          thingName: uuid,
+        let params = {
+          thingName: device.uuid,
           principal: certArn
         }
         await iot.send(new DetachThingPrincipalCommand(params));
@@ -175,17 +213,29 @@ async function handleDelete(uuid) {
         await iot.send(new DeleteCertificateCommand(params));
         console.log(`Deleted certificate`)
     } else {
-        console.warn("Certificate not found for thing")
+        console.warn("Certificate not found for Thing")
     }
 
-    params = {
-      thingName: uuid
+    try {
+        let params = {
+          thingName: device.uuid
+        }
+        await iot.send(new DeleteThingCommand(params));
+    } catch (error) {
+        if (!error.name || error.name != "ResourceNotFoundException") {
+            throw error
+        } else {
+            console.log("Thing for device not found in AWS registry")
+        }
     }
-    await iot.send(new DeleteThingCommand(params));
 
-
-    await balena.models.device.envVar.remove(uuid, 'AWS_CERT')
-    await balena.models.device.envVar.remove(uuid, 'AWS_PRIVATE_KEY')
+    if (service) {
+        await balena.models.device.serviceVar.remove(device.uuid, service.id, 'AWS_CERT')
+        await balena.models.device.serviceVar.remove(device.uuid, service.id, 'AWS_PRIVATE_KEY')
+    } else {
+        await balena.models.device.envVar.remove(device.uuid, 'AWS_CERT')
+        await balena.models.device.envVar.remove(device.uuid, 'AWS_PRIVATE_KEY')
+    }
 
     console.log("Deleted device")
     return {

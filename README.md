@@ -34,6 +34,14 @@ You will provide the environment variables below in files used by node-lambda. W
 | BALENA_EMAIL | For balena account |
 | BALENA_PASSWORD | For balena account |
 
+### HTTP API
+The HTTP endpoint expects a POST request containing a JSON body with these attributes:
+
+| Attribute | Value |
+|-----------|-------|
+| uuid | UUID of device  |
+| method | "POST" to add device to cloud registry, "DELETE" to remove  |
+| balena_service | (optional) Name of service container on balena device. If defined, creates service level variables; otherwise creates device level variables. Service level variables are more secure. |
 
 ### Test locally
 To test the Lambda function without deploying it, see `tools/test-local.sh`. The comments for that file include instructions on how to use it. You must provide environment variables from the table above in a file with contents like `tools/run.env`.
