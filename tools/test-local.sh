@@ -3,7 +3,7 @@
 # Params:
 #    * method -- POST (to create), or DELETE
 #
-#    $ test-provision.sh <POST|DELETE>
+#    $ test-local.sh <POST|DELETE>
 #
 # Usage:
 #    * Create some working directory.
@@ -18,12 +18,18 @@ BALENA_DEVICE_UUID=<your-uuid>
 BALENA_SERVICE_NAME=<your=service-name-or-blank>
 
 echo '{
-    "balena_service": "'$BALENA_SERVICE_NAME'",
-    "method": "'$1'",
-    "uuid": "'$BALENA_DEVICE_UUID'"
+    "body": {
+        "uuid": "'$BALENA_DEVICE_UUID'",
+        "balena_service": "'$BALENA_SERVICE_NAME'"
+    },
+    "requestContext": {
+        "http": {
+            "method": "'$1'"
+        }
+    }
 }' >event.json
 
 echo '{}' >context.json
 
-node-lambda run --apiGateway --configFile deploy.env --eventFile event.json \
+node-lambda run --configFile deploy.env --eventFile event.json \
    --contextFile context.json

@@ -2,7 +2,7 @@
 
 This Lambda function allows you to provision and synchronize a balena device with AWS IoT Core in a secure and automated way via an HTTP endpoint. The Lambda may be called by a balena device, as seen in the [cloud-relay](https://github.com/balena-io-examples/cloud-relay) example.
 
-| Command | Actions |
+| Method | Actions |
 |-------------|--------|
 | POST | Provisions a balena device with IoT Core. First the function verifies the device UUID with balenaCloud. Then it creates a public key certificate, attaches a security policy, and registers an AWS Thing for the device. Finally the function pushes identifiers for these entities to balena device environment variables. |
 | DELETE | Removes the AWS Thing and certificate for the balena device and removes the balena device environment variables. Essentially reverses the actions from provisioning with POST. |
@@ -35,12 +35,11 @@ You will provide the environment variables below in files used by node-lambda. W
 | BALENA_PASSWORD | For balena account |
 
 ### HTTP API
-The HTTP endpoint expects a POST request containing a JSON body with these attributes:
+The HTTP endpoint expects a request containing a JSON body with the attributes below. Use POST to add a device to the cloud registry, DELETE to remove.
 
 | Attribute | Value |
 |-----------|-------|
 | uuid | UUID of device  |
-| method | "POST" to add device to cloud registry, "DELETE" to remove  |
 | balena_service | (optional) Name of service container on balena device. If defined, creates service level variables; otherwise creates device level variables. Service level variables are more secure. |
 
 ### Test locally
@@ -51,7 +50,7 @@ After a successful POST, you should see the device appear in your IoT Core regis
 ## Deploy
 To deploy to AWS Lambda, see `tools/deploy-func.sh`.The comments for that file include instructions on how to use it. You must provide environment variables from the table above in a file with contents like `tools/.env` to deploy the function to AWS Lambda. You also must provide the balena specific environment variables in a separate `tools/deploy.env` file, which are used when running the Lambda function.
 
-After deployment, login to the AWS console and visit the Lambda console to you Lambda function. Next add an API Gateway trigger from the link on that page. Make sure the Method for the route is POST and Security is open (though you could add this later). The result should be a Lambda and API Gateway like below.
+After deployment, login to the AWS console and visit the Lambda console to you Lambda function. Next add an API Gateway trigger from the link on that page. Make sure the Method for the route is ANY and Security is open (though you could add this later). The result should be a Lambda and API Gateway like below.
 
 ![Alt text](doc/lambda-trigger.png)
 

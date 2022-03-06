@@ -14,4 +14,4 @@ BALENA_SERVICE_NAME=<your=service-name-or-blank>
 PROVISION_URL=<your-url>
 
 curl -X POST $PROVISION_URL -H "Content-Type:application/json" \
-   -d '{ "balena_service": "'$BALENA_SERVICE_NAME'", "method": "'$1'", "uuid": "'$BALENA_DEVICE_UUID'" }' -v
+   -d '{ "uuid": "'$BALENA_DEVICE_UUID'", "balena_service": "'$BALENA_SERVICE_NAME'" }' -v

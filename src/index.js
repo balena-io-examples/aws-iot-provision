@@ -23,19 +23,42 @@ exports.handler = async function(event, context) {
         const creds = { email: process.env.BALENA_EMAIL, password: process.env.BALENA_PASSWORD }
         await balena.auth.login(creds)
 
-        // Validate device with balenaCloud
-        console.log('event:', JSON.stringify(event))
+        // Validate and prepare request contents
+        console.debug('event:', JSON.stringify(event))
         if (!event || !event.body) {
             throw { code: 'provision.request.no-body' }
         }
-        const body = JSON.parse(event.body);
+        let body
+        // context.local provided by node-lambda tool for local testing.
+        if (context.local) {
+            body = event.body
+        } else {
+            // event.body passed as a string to AWS Lambda
+            body = JSON.parse(event.body)
+        }
+
+        // Determine HTTP method. Accommodate Lambda proxy versioning:
+        // https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html
+        let method
+        if (!event.requestContext) {
+            throw { code: 'provision.request.no-http' }
+        }
+        if (event.requestContext.http && event.requestContext.http.method) {  // v2.0
+            method = event.requestContext.http.method
+        } else if (event.requestContext.httpMethod) {   // v1.0
+            method = event.requestContext.httpMethod
+        } else {
+            throw { code: 'provision.request.no-http' }
+        }
+
+        // Validate device with balenaCloud
         if (!body.uuid) {
             throw { code: badBodyCode }
         }
         // lookup device; throws error if not found
         const device = await balena.models.device.get(body.uuid)
 
-        // lookup service, if name provided
+        // lookup balena service if name provided
         let service
         if (body.balena_service) {
             const allServices = await balena.models.service.getAllByApplication(device.belongs_to__application.__id)
@@ -54,7 +77,7 @@ exports.handler = async function(event, context) {
         iot = new IoTClient({ region: process.env.AWS_REGION });
 
         let deviceText = `${body.uuid} for service ${body.balena_service}`
-        switch (body.method) {
+        switch (method) {
             case 'POST':
                 console.log(`Creating device: ${deviceText} ...`)
                 return await handlePost(device, service)
