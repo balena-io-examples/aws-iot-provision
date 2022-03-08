@@ -40,7 +40,7 @@ The HTTP endpoint expects a request containing a JSON body with the attributes b
 | Attribute | Value |
 |-----------|-------|
 | uuid | UUID of device  |
-| balena_service | (optional) Name of service container on balena device. If defined, creates service level variables; otherwise creates device level variables. Service level variables are more secure. |
+| balena_service | (optional) Name of service container on balena device that uses provisioned key and certificate, for example `cloud-relay`. If defined, creates service level variables; otherwise creates device level variables. Service level variables are more secure. |
 
 ### Test locally
 To test the Lambda function without deploying it, see `tools/test-local.sh`. The comments for that file include instructions on how to use it. You must provide environment variables from the table above in a file with contents like `tools/run.env`.
@@ -50,7 +50,7 @@ After a successful POST, you should see the device appear in your IoT Core regis
 ## Deploy
 To deploy to AWS Lambda, see `tools/deploy-func.sh`.The comments for that file include instructions on how to use it. You must provide environment variables from the table above in a file with contents like `tools/.env` to deploy the function to AWS Lambda. You also must provide the balena specific environment variables in a separate `tools/deploy.env` file, which are used when running the Lambda function.
 
-After deployment, login to the AWS console and visit the Lambda console to you Lambda function. Next add an API Gateway trigger from the link on that page. Make sure the Method for the route is ANY and Security is open (though you could add this later). The result should be a Lambda and API Gateway like below.
+After deployment, login to the AWS console and visit the Lambda console for your Lambda function. Next add an API Gateway trigger from the link on that page. Make sure the Method for the route is ANY and Security is open (though you could add this later). The result should be a Lambda and API Gateway like below.
 
 ![Alt text](doc/lambda-trigger.png)
 
