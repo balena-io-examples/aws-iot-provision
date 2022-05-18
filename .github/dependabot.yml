@@ -1,0 +1,13 @@
+# Dependabot version update configuration
+# Adds 'patch' prefix to commits for CI.
+# Primarily intended for security updates.
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: "weekly"
+  open-pull-requests-limit: 1
+  commit-message:
+    prefix: patch
+  rebase-strategy: disabled
