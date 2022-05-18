@@ -7,7 +7,7 @@
 #
 # Usage:
 #    * Create some working directory.
-#    * Copy this file, run.env, and the repository /src directory to the
+#    * Copy this file, run.env, the repository index.js and package*.json to the
 #      working directory.
 #    * Use your values for variables of the form "<your-*>" in this file and
 #      run.env.
