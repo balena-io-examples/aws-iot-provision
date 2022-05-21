@@ -31,8 +31,7 @@ You will provide the environment variables below in files used by node-lambda. W
 | AWS_REGION | AWS region for registry, like `us-east-1` |
 | AWS_IOT_POLICY | Name of AWS policy with permissions for messaging with IoT Core |
 | AWS_ROLE_ARN | For IAM Role to execute the Lambda. This role must include the `AWSIoTLogging` and `AWSIoTConfigAccess` permissions policies. |
-| BALENA_EMAIL | For balena account |
-| BALENA_PASSWORD | For balena account |
+| BALENA_API_KEY | for use of balena API; found in balenaCloud dashboard at: `account -> Preferences -> Access tokens` |
 
 ### HTTP API
 The HTTP endpoint expects a request containing a JSON body with the attributes below. Use POST to add a device to the cloud registry, DELETE to remove.
@@ -50,7 +49,7 @@ After a successful POST, you should see the device appear in your IoT Core regis
 ## Deploy
 To deploy to AWS Lambda, see `tools/deploy-func.sh`.The comments for that file include instructions on how to use it. You must provide environment variables from the table above in a file with contents like `tools/.env` to deploy the function to AWS Lambda. You also must provide the balena specific environment variables in a separate `tools/deploy.env` file, which are used when running the Lambda function.
 
-After deployment, login to the AWS console and visit the Lambda console for your Lambda function. Next add an API Gateway trigger from the link on that page. Make sure the Method for the route is ANY and Security is open (though you could add this later). The result should be a Lambda and API Gateway like below.
+After deployment, login to the AWS console and visit the Lambda console for your Lambda function. Next add an API Gateway trigger from the link on that page. The API type is HTTP, and Security is open (though you could add this later). The result should be a Lambda and API Gateway like below.
 
 ![Alt text](doc/lambda-trigger.png)
 
