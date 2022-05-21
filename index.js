@@ -20,8 +20,7 @@ let iot = null
 exports.handler = async function(event, context) {
     try {
         const badBodyCode = 'provision.request.bad-body'
-        const creds = { email: process.env.BALENA_EMAIL, password: process.env.BALENA_PASSWORD }
-        await balena.auth.login(creds)
+        await balena.auth.loginWithToken(process.env.BALENA_API_KEY)
 
         // Validate and prepare request contents
         console.debug('event:', JSON.stringify(event))

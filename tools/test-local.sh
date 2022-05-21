@@ -31,5 +31,5 @@ echo '{
 
 echo '{}' >context.json
 
-node-lambda run --configFile deploy.env --eventFile event.json \
+node-lambda run --configFile run.env --eventFile event.json \
    --contextFile context.json
