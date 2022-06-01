@@ -8,12 +8,19 @@ This Lambda function allows you to provision and synchronize a balena device wit
 | DELETE | Removes the AWS Thing and certificate for the balena device and removes the balena device environment variables. Essentially reverses the actions from provisioning with POST. |
 
 ## Setup and Testing
-### AWS IoT Core setup
-These instructions assume you are somewhat familiar with AWS. See the AWS IoT Core [Getting Started](https://docs.aws.amazon.com/iot/latest/developerguide/iot-gs.html) guide for background.
+### AWS setup
+These instructions assume you are somewhat familiar with AWS IoT. If not, AWS provides some focused, easy to follow documentation to help you get started. See these pages:
 
-You must define an AWS IoT policy that describes the permissible messaging operations between IoT Core and a balena device, and provide its name as the AWS_IOT_POLICY variable in the table below. Provisioning attaches this policy to the public key certificate created for a device. See the statements in the example `doc/policy.json` and a [screenshot](doc/iot-messaging-policy.png), and the IoT Core policy [documentation](https://docs.aws.amazon.com/iot/latest/developerguide/iot-policies.html) for background.
+* [Set up your AWS account](https://docs.aws.amazon.com/iot/latest/developerguide/setting-up.html)
+* [Create AWS IoT resources](https://docs.aws.amazon.com/iot/latest/developerguide/create-iot-resources.html)
 
-You also must define an AWS IAM Role with permissions to run the Lambda function as described by the AWS_ROLE_ARN entry in the table below. See an [example screenshot](doc/iam-provision-role.png).
+#### IoT Core
+You must define an AWS IoT policy that describes the permissible messaging operations between IoT Core and a balena device, and provide its name as the AWS_IOT_POLICY variable in the table below. Provisioning attaches this policy to the public key certificate created for a device. See the *Create resources* documentation page above for background
+
+See the statements in the example `doc/policy.json` and a [screenshot](doc/iot-messaging-policy.png). Your AWS account ID is available from the IAM dashboard. Also see the IoT Core policy [documentation](https://docs.aws.amazon.com/iot/latest/developerguide/iot-policies.html) for background.
+
+#### Lambda role
+You also must define an AWS IAM Role with permissions to execute the Lambda function as shown in the AWS_ROLE_ARN entry in the table below. When creating the rule, use the "Lambda" use case, which allows a Lambda function to to assume the role. See example screenshots of the [Permissions](doc/iam-role-permissions.png) and [Trust relationships](doc/iam-role-trust.png) tabs.
 
 ### Development setup
 First clone the [balena-io-examples/aws-iot-provision](https://github.com/balena-io-examples/aws-iot-provision) repository. Then install the [node-lambda](https://www.npmjs.com/package/node-lambda) tool for local testing and deployment to AWS Lambda. It's simplest to install it globally:

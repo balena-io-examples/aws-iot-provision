@@ -4,12 +4,12 @@
     {
       "Effect": "Allow",
       "Action": "iot:Connect",
-      "Resource": "arn:aws:iot:<your-region>:<your-ID>:client/*"
+      "Resource": "arn:aws:iot:<your-region>:<your-account-ID>:client/*"
     },
     {
       "Effect": "Allow",
       "Action": "iot:Publish",
-      "Resource": "arn:aws:iot:<your-region>:<your-ID>:topic/<your-topic>"
+      "Resource": "arn:aws:iot:<your-region>:<your-account-ID>:topic/<your-topic>"
     },
   ]
 }
