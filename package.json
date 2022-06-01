@@ -1,7 +1,7 @@
 {
   "name": "aws-iot-provision",
   "private": false,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "AWS Lambda function to provision a balena device to IoT Core",
   "main": "index.js",
   "dependencies": {
@@ -30,6 +30,6 @@
   },
   "homepage": "https://github.com/balena-io-examples/aws-iot-provision",
   "versionist": {
-    "publishedAt": "2022-05-21T15:53:04.773Z"
+    "publishedAt": "2022-06-01T22:01:57.874Z"
   }
 }
