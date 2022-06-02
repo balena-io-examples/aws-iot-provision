@@ -9,10 +9,7 @@ This Lambda function allows you to provision and synchronize a balena device wit
 
 ## Setup and Testing
 ### AWS setup
-These instructions assume you are somewhat familiar with AWS IoT. If not, AWS provides some focused, easy to follow documentation to help you get started. See these pages:
-
-* [Set up your AWS account](https://docs.aws.amazon.com/iot/latest/developerguide/setting-up.html)
-* [Create AWS IoT resources](https://docs.aws.amazon.com/iot/latest/developerguide/create-iot-resources.html)
+These instructions assume you are somewhat familiar with AWS IoT. If not, AWS provides some focused, easy to follow documentation to help you get started. See these pages: [Set up your AWS account](https://docs.aws.amazon.com/iot/latest/developerguide/setting-up.html) and [Create AWS IoT resources](https://docs.aws.amazon.com/iot/latest/developerguide/create-iot-resources.html).
 
 #### IoT Core
 You must define an AWS IoT policy that describes the permissible messaging operations between IoT Core and a balena device, and provide its name as the AWS_IOT_POLICY variable in the table below. Provisioning attaches this policy to the public key certificate created for a device. See the *Create resources* documentation page above for background
@@ -20,7 +17,7 @@ You must define an AWS IoT policy that describes the permissible messaging opera
 See the statements in the example `doc/policy.json` and a [screenshot](doc/iot-messaging-policy.png). Your AWS account ID is available from the IAM dashboard. Also see the IoT Core policy [documentation](https://docs.aws.amazon.com/iot/latest/developerguide/iot-policies.html) for background.
 
 #### Lambda role
-You also must define an AWS IAM Role with permissions to execute the Lambda function as shown in the AWS_ROLE_ARN entry in the table below. When creating the rule, use the "Lambda" use case, which allows a Lambda function to to assume the role. See example screenshots of the [Permissions](doc/iam-role-permissions.png) and [Trust relationships](doc/iam-role-trust.png) tabs.
+You also must define an AWS IAM Role with permissions to execute the Lambda function as shown in the AWS_ROLE_ARN entry in the table below. When creating the rule, use the "Lambda" use case, which allows a Lambda function to assume the role. See example screenshots of the [Permissions](doc/iam-role-permissions.png) and [Trust relationships](doc/iam-role-trust.png) tabs.
 
 ### Development setup
 First clone the [balena-io-examples/aws-iot-provision](https://github.com/balena-io-examples/aws-iot-provision) repository. Then install the [node-lambda](https://www.npmjs.com/package/node-lambda) tool for local testing and deployment to AWS Lambda. It's simplest to install it globally:
