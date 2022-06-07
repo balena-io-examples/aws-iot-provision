@@ -15,7 +15,14 @@
 #    * Then run this file, including the method parameter as shown above.
 
 BALENA_DEVICE_UUID=<your-uuid>
+# Service name must be valid for the fleet the device is in; otherwise leave it blank.
 BALENA_SERVICE_NAME=<your=service-name-or-blank>
+
+if [ -z "$1" ]; then
+  echo "Missing HTTP method parameter"
+  echo "$0 <POST|DELETE>"
+  exit 1
+fi
 
 echo '{
     "body": {

@@ -1,3 +1,4 @@
+# Assumes publishing to the default 'sensors' topic
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -9,7 +10,7 @@
     {
       "Effect": "Allow",
       "Action": "iot:Publish",
-      "Resource": "arn:aws:iot:<your-region>:<your-account-ID>:topic/<your-topic>"
+      "Resource": "arn:aws:iot:<your-region>:<your-account-ID>:topic/sensors"
     },
   ]
 }
