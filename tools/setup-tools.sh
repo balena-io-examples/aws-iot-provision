@@ -63,6 +63,10 @@ EOF
 
 # Init deploy.env, for deployment test
 cat > deploy.env <<EOF
+# Static values
+# required for balena API login() from Lambda runtime
+RESINRC_DATA_DIRECTORY=/tmp
+
 # User values
 EOF
 

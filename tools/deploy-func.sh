@@ -2,4 +2,9 @@
 #
 #    $ deploy-func.sh
 
-npx node-lambda deploy --configFile deploy.env
+# deploy only necessary files
+rm -rf deploy-source
+mkdir deploy-source
+cp index.js package*.json deploy-source
+
+npx node-lambda deploy --configFile deploy.env --sourceDirectory deploy-source

@@ -53,13 +53,13 @@ cp source/tools/setup-tools.sh .
 To test the Lambda function without deploying it, run this command in the workspace you created:
 
 ```
-# UUID must be for a valid device
+# UUID must be for a valid device or 'test-provision'
 # <method> is POST or DELETE
 
-./test-local.sh -u UUID <method>
+./test-local.sh [-u UUID] <method>
 ```
 
-After a successful POST, you should see the device appear as a Thing in your IoT Core registry like the screenshot below, as well as its public key certificate. Corresponding `AWS_CERT` and `AWS_PRIVATE_KEY` variables appear in balenaCloud for the device. After a successful DELETE, those variables disappear.
+After a successful POST, you should see the device appear as a Thing in your IoT Core registry like the screenshot below, as well as its public key certificate. If using a valid UUID, the corresponding `AWS_CERT` and `AWS_PRIVATE_KEY` variables appear in balenaCloud for the device. After a successful DELETE, those variables disappear.
 
 ![IoT core device](doc/iot-core-device.png)
 
@@ -83,11 +83,11 @@ The result should be a Lambda and API Gateway like below.
 To test the Lambda installed on AWS, run this command in the workspace you created:
 
 ```
-# UUID must be for a valid device
+# UUID must be for a valid device or 'test-provision'
 # <method> is POST or DELETE
 # <provision_url> is for the API Gateway HTTP endpoint
 
-./test-remote.sh -u UUID <method> <provision_url>
+./test-remote.sh [-u UUID] <method> <provision_url>
 ```
 
-After a successful POST, you should see the device appear in your IoT Core registry and `AWS_CERT` and `AWS_PRIVATE_KEY` variables appear in balenaCloud for the device. After a successful DELETE, those variables disappear.
+After a successful POST, you should see the device appear in your IoT Core registry. If using a valid UUID, `AWS_CERT` and `AWS_PRIVATE_KEY` variables appear in balenaCloud for the device. After a successful DELETE, those variables disappear.
