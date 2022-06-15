@@ -21,8 +21,11 @@ See the documentation, [Create AWS IoT resources](https://docs.aws.amazon.com/io
 #### Lambda role
 You also must define an AWS IAM Role for the HTTP gateway endpoint to execute the Lambda function. See the documentation, [AWS Lambda execution role](https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html#permissions-executionrole-console). When creating the role, use the "Lambda" use case, which allows the HTTP endpoint to assume the role for a Lambda function. Also use the specific permissons policies shown for the AWS_ROLE_ARN entry in the table below. See example screenshots of the [Permissions](doc/iam-role-permissions.png) and [Trust relationships](doc/iam-role-trust.png) tabs.
 
+#### IAM User
+It is best to assign an IAM User with limited privileges to execute the Lambda function. See the documentation, [Creating IAM users](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console). The user requires Programmatic access. Attach existing policies as shown for AWS_ACCESS_KEY_ID in the table below. *After you select to create the user, be sure to save the Secret access key*, as shown in the [screenshot](doc/im-user-created.png).
+
 ### Tools setup
-We provide command line tools to deploy and test the Lambda function and HTTP endpoint. These tools must identify your account, policies, and so on to execute, as shown in the table below. Follow the steps below to create a workspace and define these values.
+We provide command line tools to deploy and test the Lambda function and HTTP endpoint. These tools must be configured to identify your account, policies and so on. Follow the steps below to create a workspace and define these values.
 
 The setup depends on a Mac/Linux/WSL command line and NodeJS, which is easy to install with the [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) utility.
 
@@ -33,10 +36,10 @@ git clone https://github.com/balena-io-examples/aws-iot-provision.git source
 # create workspace
 cp source/tools/template.env tools.env
 cp source/tools/setup-tools.sh .
+```
+Edit `tools.env` to provide your values from the table below, and finally setup the tools to use these values with this command:
 
-# edit tools.env to provide the values in the table below
-
-# prepare tools
+```
 ./setup-tools.sh
 ```
 
@@ -53,10 +56,10 @@ cp source/tools/setup-tools.sh .
 To test the Lambda function without deploying it, run this command in the workspace you created:
 
 ```
-# UUID must be for a valid device or 'test-provision'
+# <UUID> must be for a valid device or 'test-provision'
 # <method> is POST or DELETE
 
-./test-local.sh [-u UUID] <method>
+./test-local.sh -u <UUID> <method>
 ```
 
 After a successful POST, you should see the device appear as a Thing in your IoT Core registry like the screenshot below, as well as its public key certificate. If using a valid UUID, the corresponding `AWS_CERT` and `AWS_PRIVATE_KEY` variables appear in balenaCloud for the device. After a successful DELETE, those variables disappear.
@@ -83,11 +86,11 @@ The result should be a Lambda and API Gateway like below.
 To test the Lambda installed on AWS, run this command in the workspace you created:
 
 ```
-# UUID must be for a valid device or 'test-provision'
+# <UUID> must be for a valid device or 'test-provision'
 # <method> is POST or DELETE
 # <provision_url> is for the API Gateway HTTP endpoint
 
-./test-remote.sh [-u UUID] <method> <provision_url>
+./test-remote.sh -u <UUID> <method> <provision_url>
 ```
 
 After a successful POST, you should see the device appear in your IoT Core registry. If using a valid UUID, `AWS_CERT` and `AWS_PRIVATE_KEY` variables appear in balenaCloud for the device. After a successful DELETE, those variables disappear.
