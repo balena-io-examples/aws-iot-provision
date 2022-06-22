@@ -4,10 +4,18 @@ This Lambda function allows you to provision and synchronize a balena device wit
 
 | Method | Actions |
 |-------------|--------|
-| POST | Provisions a balena device with IoT Core. First the function verifies the device UUID with balenaCloud. Then it creates a public key certificate, attaches a security policy, and registers an AWS Thing for the device. Finally the function pushes identifiers for these entities to balena device environment variables. |
+| POST | Provisions a balena device with IoT Core. First the function verifies the device UUID with balenaCloud. Then it creates a public key certificate, attaches a security policy, and registers an AWS Thing for the device. Finally the function sets balena device environment variables for these entities. |
 | DELETE | Removes the AWS Thing and certificate for the balena device and removes the balena device environment variables. Essentially reverses the actions from provisioning with POST. |
 
 These instructions describe how to setup your AWS infrastructure for device provisioning, including tools to deploy and test the Lambda function and HTTP endpoint.
+
+## Device Environment Variables
+Once the Lambda function has provisioned the device with AWS, it sets balena device environment variables as described below, which allow the device to connect to IoT Core.
+
+| Variable | Value |
+|----------|-------|
+| AWS_CERT | Public key certificate in PEM format, base64 encoded to eliminate line wrapping |
+| AWS_PRIVATE_KEY | Private key in PEM format, base64 encoded to eliminate line wrapping |
 
 ## Setup and Testing
 ### AWS setup
