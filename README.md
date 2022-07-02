@@ -32,7 +32,7 @@ You also must define an AWS IAM Role for the HTTP gateway endpoint to execute th
 #### IAM User
 It is best to assign an IAM User with limited privileges to execute the Lambda function. See the documentation, [Creating IAM users](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console). The user requires Programmatic access. Attach existing policies as shown for AWS_ACCESS_KEY_ID in the table below. *After you select to create the user, be sure to save the Secret access key*, as shown in the [screenshot](doc/im-user-created.png).
 
-### Tools setup
+### Workspace setup
 We provide command line tools to deploy and test the Lambda function and HTTP endpoint. These tools must be configured to identify your account, policies and so on. Follow the steps below to create a workspace and define these values.
 
 The setup depends on a Mac/Linux/WSL command line and NodeJS, which is easy to install with the [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) utility.
