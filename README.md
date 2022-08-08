@@ -21,16 +21,20 @@ Once the Lambda function has provisioned the device with AWS, it sets balena dev
 ### AWS setup
 We assume you are somewhat familiar with AWS IoT. If not, AWS provides some focused, easy to follow documentation to help you get started. See the page, [Set up your AWS account](https://docs.aws.amazon.com/iot/latest/developerguide/setting-up.html).
 
-#### IoT Core
+The setup items below all are related to AWS [IAM](https://docs.aws.amazon.com/IAM/latest/UserGuide/intro-structure.html) -- Identity and Access Management. Each item allows some principal (device/role/user) to perform an action on a resource. The diagram below shows the actions and AWS resources involved.
+
+![AWS Setup Overview](doc/aws-setup-overview.png)
+
+#### IoT Core (for Send data)
 You must define an AWS IAM policy that allows your device to connect to IoT Core and publish MQTT messages. At runtime, provisioning attaches the public key certificate created for a device to this policy.
 
 See the documentation, [Create AWS IoT resources](https://docs.aws.amazon.com/iot/latest/developerguide/create-iot-resources.html#create-iot-policy) for steps to follow. The result must allow the actions shown for the AWS_IOT_POLICY entry in the table below, like this [screenshot](doc/iot-messaging-policy.png). Your AWS account region and ID for the policy resource ARN are available in the dropdowns at the top right of the web page.
 
-#### Lambda role
+#### Lambda role (for Provision)
 You also must define an AWS IAM Role for the HTTP gateway endpoint to execute the Lambda function. See the documentation, [AWS Lambda execution role](https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html#permissions-executionrole-console). When creating the role, use the "Lambda" use case, which allows the HTTP endpoint to assume the role for a Lambda function. Also use the specific permissons policies shown for the AWS_ROLE_ARN entry in the table below. See example screenshots of the [Permissions](doc/iam-role-permissions.png) and [Trust relationships](doc/iam-role-trust.png) tabs.
 
-#### IAM User
-It is best to assign an IAM User with limited privileges to execute the Lambda function. See the documentation, [Creating IAM users](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console). The user requires Programmatic access. Attach existing policies as shown for AWS_ACCESS_KEY_ID in the table below. *After you select to create the user, be sure to save the Secret access key*, as shown in the [screenshot](doc/im-user-created.png).
+#### IAM User (for Test / Deploy)
+In the Workspace setup section below, we use the node-lambda [package](https://github.com/motdotla/node-lambda) to test provisioning directly from your workstation and to deploy to AWS. It is best to assign an IAM User with limited privileges for these actions. See the documentation, [Creating IAM users](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console). The user requires Programmatic access. Attach existing policies as shown for AWS_ACCESS_KEY_ID in the table below. *After you select to create the user, be sure to save the Secret access key*, as shown in the [screenshot](doc/iam-user-created.png).
 
 ### Workspace setup
 We provide command line tools to deploy and test the Lambda function and HTTP endpoint. These tools must be configured to identify your account, policies and so on. Follow the steps below to create a workspace and define these values.
