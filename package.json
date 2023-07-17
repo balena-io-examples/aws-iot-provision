@@ -6,7 +6,7 @@
   "main": "index.js",
   "dependencies": {
     "@aws-sdk/client-iot": "^3.47.0",
-    "balena-sdk": "^16.11.2"
+    "balena-sdk": "^17.10.0"
   },
   "devDependencies": {
     "node-lambda": "^1.0.0"
