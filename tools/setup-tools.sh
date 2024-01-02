@@ -72,22 +72,22 @@ EOF
 
 # Allocate values from template env file to specific env files
 while IFS= read -r line; do
-  if [ $(expr match "${line}" "AWS_ACCESS_KEY_ID=") = 18 ]; then
+  if [[ "${line}" =~ "AWS_ACCESS_KEY_ID=" ]]; then
     echo "${line}" >> run.env
     echo "${line}" >> .env
-  elif [ $(expr match "${line}" "AWS_SECRET_ACCESS_KEY=") = 22 ]; then
+  elif [[ "${line}" =~ "AWS_SECRET_ACCESS_KEY=" ]]; then
     echo "${line}" >> run.env
     echo "${line}" >> .env
-  elif [ $(expr match "${line}" "AWS_ROLE_ARN=") = 13 ]; then
+  elif [[ "${line}" =~ "AWS_ROLE_ARN=" ]]; then
     echo "${line}" >> run.env
     echo "${line}" >> .env
-  elif [ $(expr match "${line}" "AWS_REGION=") = 11 ]; then
+  elif [[ "${line}" =~ "AWS_REGION=" ]]; then
     echo "${line}" >> run.env
     echo "${line}" >> .env
-  elif [ $(expr match "${line}" "BALENA_API_KEY=") = 15 ]; then
+  elif [[ "${line}" =~ "BALENA_API_KEY=" ]]; then
     echo "${line}" >> run.env
     echo "${line}" >> deploy.env
-  elif [ $(expr match "${line}" "AWS_IOT_POLICY=") = 15 ]; then
+  elif [[ "${line}" =~ "AWS_IOT_POLICY=" ]]; then
     echo "${line}" >> run.env
     echo "${line}" >> deploy.env
   fi
